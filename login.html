@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anynomous Chat - Login</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0066ff 0%, #00b8ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo-circle {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #0066ff 0%, #00b8ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+        }
+
+        .logo-circle i {
+            font-size: 30px;
+            color: white;
+        }
+
+        .login-logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0066ff;
+            margin: 0;
+        }
+
+        .login-subtitle {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-section h3 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-section h3 i {
+            color: #0066ff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .input-with-icon input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .input-with-icon input:focus {
+            outline: none;
+            border-color: #0066ff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Button Styles */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0066ff 0%, #00b8ff 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #0066ff;
+            border: 2px solid #0066ff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 102, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .btn-google {
+            background: white;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-google:hover {
+            border-color: #0066ff;
+            transform: translateY(-2px);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            background: white;
+        }
+
+        /* Messages */
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0066ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .login-footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .login-footer i {
+            color: #0066ff;
+            margin-right: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 25px;
+            }
+            
+            .login-logo h1 {
+                font-size: 24px;
+            }
+            
+            .logo-circle {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .logo-circle i {
+                font-size: 24px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <div class="logo-circle">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <h1>Anynomous Chat</h1>
+                </div>
+                <p class="login-subtitle">Secure messaging with complete privacy</p>
+            </div>
+            
+            <div class="login-form">
+                <!-- Email/Password Login -->
+                <div class="form-section">
+                    <h3><i class="fas fa-envelope"></i> Email Login</h3>
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="Enter your password" required>
+                            <button type="button" class="toggle-password" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="emailLoginBtn" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                    <button id="emailSignupBtn" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i> Create New Account
+                    </button>
+                </div>
+                
+                <!-- Divider -->
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <!-- Google Sign-In -->
+                <div class="form-section">
+                    <h3><i class="fas fa-bolt"></i> Quick Sign-In</h3>
+                    <button id="googleLoginBtn" class="btn btn-google">
+                        <i class="fab fa-google"></i> Continue with Google
+                    </button>
+                </div>
+                
+                <!-- Error/Success Messages -->
+                <div id="loginMessage" class="message"></div>
+                
+                <!-- Loading Indicator -->
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Authenticating...</p>
+                </div>
+            </div>
+            
+            <div class="login-footer">
+                <p><i class="fas fa-shield-alt"></i> Your privacy is our priority. All chats are encrypted.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCGHhx35Rd_wl422i6dXARwVLCmhjp11Zg",
+            authDomain: "bgmi-tournament-panel.firebaseapp.com",
+            databaseURL: "https://bgmi-tournament-panel-default-rtdb.firebaseio.com",
+            projectId: "bgmi-tournament-panel",
+            storageBucket: "bgmi-tournament-panel.firebasestorage.app",
+            messagingSenderId: "531853804076",
+            appId: "1:531853804076:web:0be88f13b7c721bc354789"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        // Google Provider
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log("User already logged in, redirecting to chat...");
+                // Check if username is set
+                database.ref('users/' + user.uid).once('value').then((snapshot) => {
+                    if (snapshot.exists()) {
+                        window.location.href = 'index.html';
+                    } else {
+                        // User doesn't have username yet, still go to index
+                        window.location.href = 'index.html';
+                    }
+                }).catch((error) => {
+                    console.error("Error checking user data:", error);
+                });
+            }
+        });
+
+        // Initialize page elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password toggle
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+                });
+            }
+
+            // Email Login
+            const emailLoginBtn = document.getElementById('emailLoginBtn');
+            if (emailLoginBtn) {
+                emailLoginBtn.addEventListener('click', handleEmailLogin);
+            }
+
+            // Email Signup
+            const emailSignupBtn = document.getElementById('emailSignupBtn');
+            if (emailSignupBtn) {
+                emailSignupBtn.addEventListener('click', handleEmailSignup);
+            }
+
+            // Google Login
+            const googleLoginBtn = document.getElementById('googleLoginBtn');
+            if (googleLoginBtn) {
+                googleLoginBtn.addEventListener('click', handleGoogleLogin);
+            }
+
+            // Enter key support
+            document.getElementById('email')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleEmailLogin();
+            });
+            
+            document.getElementById('password')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleEmailLogin();
+            });
+        });
+
+        // Show/Hide Loading
+        function showLoading(show) {
+            const loadingEl = document.getElementById('loading');
+            if (loadingEl) {
+                loadingEl.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        // Show Message
+        function showMessage(message, type = 'info') {
+            const messageEl = document.getElementById('loginMessage');
+            if (messageEl) {
+                messageEl.textContent = message;
+                messageEl.className = `message ${type}`;
+                messageEl.style.display = 'block';
+                
+                // Auto-hide success messages after 3 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        messageEl.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        }
+
+        // Email Login Handler
+        async function handleEmailLogin() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showMessage('Please enter email and password', 'error');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showMessage('Please enter a valid email address', 'error');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showMessage('Login successful! Redirecting...', 'success');
+                // The redirect will happen via auth state observer
+            } catch (error) {
+                console.error("Email login error:", error);
+                showMessage(getAuthErrorMessage(error), 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Email Signup Handler
+        async function handleEmailSignup() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showMessage('Please enter email and password', 'error');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showMessage('Please enter a valid email address', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                showMessage('Account created successfully! Redirecting...', 'success');
+                
+                // Send email verification
+                await userCredential.user.sendEmailVerification();
+                
+            } catch (error) {
+                console.error("Email signup error:", error);
+                showMessage(getAuthErrorMessage(error), 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Google Login Handler
+        async function handleGoogleLogin() {
+            showLoading(true);
+            
+            try {
+                await auth.signInWithPopup(googleProvider);
+                showMessage('Google login successful! Redirecting...', 'success');
+                // The redirect will happen via auth state observer
+            } catch (error) {
+                console.error("Google login error:", error);
+                showMessage(getAuthErrorMessage(error), 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Helper Functions
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function getAuthErrorMessage(error) {
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    return 'Invalid email address format';
+                case 'auth/user-disabled':
+                    return 'This account has been disabled';
+                case 'auth/user-not-found':
+                    return 'No account found with this email';
+                case 'auth/wrong-password':
+                    return 'Incorrect password';
+                case 'auth/email-already-in-use':
+                    return 'Email already in use';
+                case 'auth/weak-password':
+                    return 'Password is too weak (minimum 6 characters)';
+                case 'auth/operation-not-allowed':
+                    return 'Email/password accounts are not enabled';
+                case 'auth/network-request-failed':
+                    return 'Network error. Please check your connection';
+                case 'auth/too-many-requests':
+                    return 'Too many attempts. Please try again later';
+                case 'auth/popup-blocked':
+                    return 'Popup blocked. Please allow popups for this site';
+                case 'auth/popup-closed-by-user':
+                    return 'Login popup was closed';
+                default:
+                    return error.message || 'Authentication failed. Please try again.';
+            }
+        }
+    </script>
+</body>
+</html>
