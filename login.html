@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anynomous Chat - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <div class="logo-circle">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <h1>Anynomous Chat</h1>
+                </div>
+                <p class="login-subtitle">Secure messaging with complete privacy</p>
+            </div>
+            
+            <div class="login-form">
+                <!-- Email/Password Login -->
+                <div class="form-section">
+                    <h3><i class="fas fa-envelope"></i> Email Login</h3>
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="Enter your password" required>
+                            <button type="button" class="toggle-password" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="emailLoginBtn" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                    <button id="emailSignupBtn" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i> Create New Account
+                    </button>
+                </div>
+                
+                <!-- Divider -->
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <!-- Google Sign-In -->
+                <div class="form-section">
+                    <h3><i class="fas fa-bolt"></i> Quick Sign-In</h3>
+                    <button id="googleLoginBtn" class="btn btn-google">
+                        <i class="fab fa-google"></i> Continue with Google
+                    </button>
+                </div>
+                
+                <!-- Error/Success Messages -->
+                <div id="loginMessage" class="message"></div>
+                
+                <!-- Loading Indicator -->
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Authenticating...</p>
+                </div>
+            </div>
+            
+            <div class="login-footer">
+                <p><i class="fas fa-shield-alt"></i> Your privacy is our priority. All chats are encrypted.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Check auth state immediately and redirect if already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            // Firebase Configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyCGHhx35Rd_wl422i6dXARwVLCmhjp11Zg",
+                authDomain: "bgmi-tournament-panel.firebaseapp.com",
+                databaseURL: "https://bgmi-tournament-panel-default-rtdb.firebaseio.com",
+                projectId: "bgmi-tournament-panel",
+                storageBucket: "bgmi-tournament-panel.firebasestorage.app",
+                messagingSenderId: "531853804076",
+                appId: "1:531853804076:web:0be88f13b7c721bc354789"
+            };
+
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            
+            // Check if user is already logged in
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // User is logged in, check if username is set
+                    const database = firebase.database();
+                    const userRef = database.ref('users/' + user.uid);
+                    
+                    userRef.once('value').then((snapshot) => {
+                        if (snapshot.exists()) {
+                            // User has username, redirect to chat
+                            window.location.href = 'index.html';
+                        } else {
+                            // User doesn't have username, stay on login but show username modal on index
+                            // We'll still redirect to index.html where username modal will show
+                            window.location.href = 'index.html';
+                        }
+                    }).catch((error) => {
+                        console.error("Error checking user data:", error);
+                    });
+                }
+                // If user is not logged in, stay on login page
+            });
+        });
+    </script>
+    
+    <script src="auth.js"></script>
+</body>
+</html>
