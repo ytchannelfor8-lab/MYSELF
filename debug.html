@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCGHhx35Rd_wl422i6dXARwVLCmhjp11Zg",
+            authDomain: "bgmi-tournament-panel.firebaseapp.com",
+            databaseURL: "https://bgmi-tournament-panel-default-rtdb.firebaseio.com",
+            projectId: "bgmi-tournament-panel",
+            storageBucket: "bgmi-tournament-panel.firebasestorage.app",
+            messagingSenderId: "531853804076",
+            appId: "1:531853804076:web:0be88f13b7c721bc354789"
+        };
+        
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("✅ Firebase initialized successfully");
+        } catch (error) {
+            console.error("❌ Firebase error:", error);
+        }
+    </script>
+</head>
+<body>
+    <h1>Firebase Debug</h1>
+    <p>Check browser console (F12)</p>
+</body>
+</html>

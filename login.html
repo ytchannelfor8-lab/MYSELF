@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anynomous Chat - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0066FF 0%, #00B8FF 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 48px;
+            color: #0066FF;
+            margin-bottom: 15px;
+        }
+        
+        .logo h1 {
+            color: #0066FF;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #0066FF;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #0066FF;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0052CC;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #0066FF;
+            border: 2px solid #0066FF;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-google {
+            background: white;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+        
+        .btn-google:hover {
+            border-color: #0066FF;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            color: #666;
+            position: relative;
+        }
+        
+        .divider:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #ddd;
+            z-index: 1;
+        }
+        
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            display: block;
+        }
+        
+        .message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+            display: block;
+        }
+        
+        .loading {
+            text-align: center;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0066FF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <i class="fas fa-user-secret"></i>
+                <h1>Anynomous Chat</h1>
+            </div>
+            
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Email address" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            
+            <button id="emailLoginBtn" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+            
+            <button id="emailSignupBtn" class="btn-secondary">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+            
+            <div class="divider">
+                <span>OR</span>
+            </div>
+            
+            <button id="googleLoginBtn" class="btn-google">
+                <i class="fab fa-google"></i> Sign in with Google
+            </button>
+            
+            <div id="loginMessage" class="message"></div>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Authenticating...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCGHhx35Rd_wl422i6dXARwVLCmhjp11Zg",
+            authDomain: "bgmi-tournament-panel.firebaseapp.com",
+            databaseURL: "https://bgmi-tournament-panel-default-rtdb.firebaseio.com",
+            projectId: "bgmi-tournament-panel",
+            storageBucket: "bgmi-tournament-panel.firebasestorage.app",
+            messagingSenderId: "531853804076",
+            appId: "1:531853804076:web:0be88f13b7c721bc354789"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        
+        // Set persistence
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        
+        // Google Provider
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        
+        // DOM Elements
+        const emailLoginBtn = document.getElementById('emailLoginBtn');
+        const emailSignupBtn = document.getElementById('emailSignupBtn');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const messageEl = document.getElementById('loginMessage');
+        const loadingEl = document.getElementById('loading');
+        
+        // Event Listeners
+        emailLoginBtn.addEventListener('click', handleEmailLogin);
+        emailSignupBtn.addEventListener('click', handleEmailSignup);
+        googleLoginBtn.addEventListener('click', handleGoogleLogin);
+        
+        // Enter key support
+        emailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleEmailLogin();
+        });
+        
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleEmailLogin();
+        });
+        
+        // Check if already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log("User already logged in, redirecting to chat...");
+                // Give a small delay so user can see the message
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        });
+        
+        // Functions
+        function showMessage(message, type) {
+            messageEl.textContent = message;
+            messageEl.className = `message ${type}`;
+        }
+        
+        function showLoading(show) {
+            loadingEl.style.display = show ? 'block' : 'none';
+        }
+        
+        async function handleEmailLogin() {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
+            if (!email || !password) {
+                showMessage('Please enter email and password', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showMessage('Login successful! Redirecting...', 'success');
+                // Redirect handled by auth state observer
+            } catch (error) {
+                showMessage(getErrorMessage(error), 'error');
+                showLoading(false);
+            }
+        }
+        
+        async function handleEmailSignup() {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
+            if (!email || !password) {
+                showMessage('Please enter email and password', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                await auth.createUserWithEmailAndPassword(email, password);
+                showMessage('Account created! Redirecting...', 'success');
+                // Redirect handled by auth state observer
+            } catch (error) {
+                showMessage(getErrorMessage(error), 'error');
+                showLoading(false);
+            }
+        }
+        
+        async function handleGoogleLogin() {
+            showLoading(true);
+            
+            try {
+                await auth.signInWithPopup(googleProvider);
+                showMessage('Google login successful! Redirecting...', 'success');
+                // Redirect handled by auth state observer
+            } catch (error) {
+                showMessage(getErrorMessage(error), 'error');
+                showLoading(false);
+            }
+        }
+        
+        function getErrorMessage(error) {
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    return 'Invalid email address';
+                case 'auth/user-disabled':
+                    return 'Account disabled';
+                case 'auth/user-not-found':
+                    return 'No account found';
+                case 'auth/wrong-password':
+                    return 'Wrong password';
+                case 'auth/email-already-in-use':
+                    return 'Email already in use';
+                case 'auth/weak-password':
+                    return 'Password too weak';
+                case 'auth/popup-blocked':
+                    return 'Popup blocked by browser';
+                case 'auth/popup-closed-by-user':
+                    return 'Login cancelled';
+                default:
+                    return error.message;
+            }
+        }
+    </script>
+</body>
+</html>
